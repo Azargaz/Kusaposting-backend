@@ -3,34 +3,36 @@ const admin = require('firebase-admin');
 
 admin.initializeApp();
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  	response.send("Hello from Firebase!");
-});
+const express = require('express');
+const app = express();
 
-exports.getKusoposts = functions.https.onRequest((req, res) => {
-	admin.firestore().collection('kusoposts').get()
+
+app.get('/kusoposts', (req, res) => {
+	admin
+		.firestore()
+		.collection('kusoposts')
+		.orderBy('createdAt', 'desc')
+		.get()
 		.then(data => {
 			let kusoposts = [];
 			data.forEach(doc => {
-				kusoposts.push(doc.data());
+				kusoposts.push({
+					kusopostId: doc.id,
+					body: doc.data().body,
+					userHandle: doc.data().userHandle,
+					createdAt: doc.data().createdAt
+				});
 			});
 			return res.json(kusoposts);
 		})
 		.catch(err => console.error(err));
 });
 
-exports.createKusopost = functions.https.onRequest((req, res) => {
-	if(req.method !== 'POST') {
-		return res.status(400).json({ err: 'Method not allowed' });
-	}
-	
+app.post('/kusopost', (req, res) => {
 	const newPost = {
 		body: req.body.body,
 		userHandle: req.body.userHandle,
-		createdAt: admin.firestore.Timestamp.fromDate(new Date())
+		createdAt: new Date().toISOString()
 	};
 
 	admin.firestore()
@@ -44,3 +46,5 @@ exports.createKusopost = functions.https.onRequest((req, res) => {
 			console.error(err);
 		})
 });
+
+exports.api = functions.region('europe-west1').https.onRequest(app);
