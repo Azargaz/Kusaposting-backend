@@ -5,7 +5,7 @@ const config = require('../config');
 const firebase = require('firebase');
 firebase.initializeApp(config.firebase);
 
-const { validateSignupData, validateLoginData } = require('../util/validators');
+const { validateSignupData, validateLoginData, reduceUserDetails } = require('../util/validators');
 
 exports.signup = (req, res) => {
 	const newUser =	{
@@ -88,6 +88,42 @@ exports.login = (req, res) => {
 		});
 };
 
+exports.addUserDetails = (req, res) => {
+	let userDetails = reduceUserDetails(req.body);
+
+	db.doc(`/users/${req.user.handle}`).update(userDetails)
+		.then(() => {
+			return res.json({ message: 'user details added successfully' });
+		})
+		.catch(err => {
+			console.error(err);
+			return res.status(500).json({ error: err.code });
+		});
+};
+
+exports.getAuthenticatedUser = (req, res) => {
+	let userData = {};
+
+	db.doc(`/users/${req.user.handle}`).get()
+		.then(doc => {
+			if(doc.exists) {
+				userData.credentials = doc.data();
+				return db.collection('likes').where('userHandle', '==', req.user.handle).get();
+			}
+		})
+		.then(data => {
+			userData.likes = [];
+			data.forEach(doc => {
+				userData.likes.push(doc.data());
+			});
+			return res.json(userData);
+		})
+		.catch(err => {
+			console.error(err);
+			return res.status(500).json({ error: err.code });
+		});
+};
+
 exports.uploadImage = (req, res) => {
 	const BusBoy = require('busboy');
 	const path = require('path');
@@ -104,9 +140,9 @@ exports.uploadImage = (req, res) => {
 			return res.status(400).json({ error: 'wrong file type submitted' });
 		}
 
-		console.log(fieldname);
-		console.log(filename);
-		console.log(mimetype);
+		// console.log(fieldname);
+		// console.log(filename);
+		// console.log(mimetype);
 
 		const imageExtension = filename.split('.')[filename.split('.').length - 1];
 		imageFileName = `${Date.now()}.${imageExtension}`;

@@ -1,4 +1,16 @@
 let db = {
+    users: [
+        {
+            userId: 'ifeiaufuwai5425429',
+            email: 'user@email.com',
+            handle: 'user',
+            createdAt: '2019-11-29T00:00:00.000Z',
+            imageUrl: 'image/dfsdgfgsdgd/gfdgfdsgfd',
+            bio: 'Hello world!',
+            website: 'https://user.com',
+            location: 'Kyoto, Japan'
+        }
+    ],
     kusoposts: [
         {
             userHandle: 'user',
@@ -9,3 +21,27 @@ let db = {
         }
     ]
 }
+
+const userDetails = {
+    // Redux data
+    credentials: {
+        userId: 'ifeiaufuwai5425429',
+        email: 'user@email.com',
+        handle: 'user',
+        createdAt: '2019-11-29T00:00:00.000Z',
+        imageUrl: 'image/dfsdgfgsdgd/gfdgfdsgfd',
+        bio: 'Hello world!',
+        website: 'https://user.com',
+        location: 'Kyoto, Japan'
+    },
+    likes: [
+        {
+            userHandle: 'user',
+            screamId: 'hh7O5oWfWucVzGbHH2pa'
+        },
+        {
+            userHandle: 'user',
+            screamId: '3IOnFoQexRcofs5OhBXO'
+        }
+    ]
+  };
