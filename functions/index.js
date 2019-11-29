@@ -11,6 +11,7 @@ firebase.initializeApp(config.firebase);
 
 const db = admin.firestore();
 
+// Get all kusoposts
 app.get('/kusoposts', (req, res) => {
 	db
 		.collection('kusoposts')
@@ -31,10 +32,39 @@ app.get('/kusoposts', (req, res) => {
 		.catch(err => console.error(err));
 });
 
-app.post('/kusopost', (req, res) => {
+const firebaseAuth = (req, res, next) => {
+	let idToken;
+	if(req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+		idToken = req.headers.authorization.split('Bearer ')[1];
+	} else {
+		console.error('no token found in header');
+		return res.status(403).json({ error: 'unauthorized' });
+	}
+
+	admin.auth().verifyIdToken(idToken)
+		.then(decodedToken => {
+			req.user = decodedToken;
+			console.log(decodedToken);
+			return db.collection('users')
+				.where('userId', '==', req.user.uid)
+				.limit(1)
+				.get();
+		})
+		.then(data => {
+			req.user.handle = data.docs[0].data().handle;
+			return next();
+		})
+		.catch(err => {
+			console.error('error while verifying token ', err);
+			return res.status(403).json(err);
+		});
+};
+
+// Post one kusopost
+app.post('/kusopost', firebaseAuth, (req, res) => {
 	const newPost = {
 		body: req.body.body,
-		userHandle: req.body.userHandle,
+		userHandle: req.user.handle,
 		createdAt: new Date().toISOString()
 	};
 
@@ -122,6 +152,7 @@ app.post('/singup', (req, res) => {
 		});
 });
 
+// Login route
 app.post('/login', (req, res) => {
 	const user = {
 		email: req.body.email,
