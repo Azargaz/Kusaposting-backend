@@ -8,7 +8,10 @@ const {
 	getAllPosts,
 	postOnePost,
 	getPost, 
-	commentOnPost
+	commentOnPost,
+	likePost,
+	unlikePost,
+	deletePost
 } = require('./handlers/posts')
 const { 
 	signup, 
@@ -22,9 +25,9 @@ const {
 app.get('/kusoposts', getAllPosts);
 app.post('/kusopost', firebaseAuth, postOnePost);
 app.get('/kusopost/:kusopostId', getPost);
-// TODO: delete post
-// TODO: like a post
-// TODO: unlike a post
+app.delete('/kusopost/:kusopostId', firebaseAuth, deletePost);
+app.get('/kusopost/:kusopostId/like', firebaseAuth, likePost);
+app.get('/kusopost/:kusopostId/unlike', firebaseAuth, unlikePost);
 app.post('/kusopost/:kusopostId/comment', firebaseAuth, commentOnPost);
 
 // Users routes
