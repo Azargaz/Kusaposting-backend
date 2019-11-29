@@ -4,12 +4,28 @@ const app = require('express')();
 
 const firebaseAuth = require('./util/firebaseAuth');
 
-const { getAllPosts, postOnePost } = require('./handlers/posts')
-const { signup, login, uploadImage, addUserDetails, getAuthenticatedUser } = require('./handlers/users');
+const { 
+	getAllPosts,
+	postOnePost,
+	getPost, 
+	commentOnPost
+} = require('./handlers/posts')
+const { 
+	signup, 
+	login, 
+	uploadImage, 
+	addUserDetails, 
+	getAuthenticatedUser
+} = require('./handlers/users');
 
 // Kusoposts routes
 app.get('/kusoposts', getAllPosts);
 app.post('/kusopost', firebaseAuth, postOnePost);
+app.get('/kusopost/:kusopostId', getPost);
+// TODO: delete post
+// TODO: like a post
+// TODO: unlike a post
+app.post('/kusopost/:kusopostId/comment', firebaseAuth, commentOnPost);
 
 // Users routes
 app.post('/singup', signup);
