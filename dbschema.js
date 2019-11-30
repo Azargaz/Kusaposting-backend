@@ -27,6 +27,16 @@ let db = {
             body: 'nice',
             createdAt: '2019-11-28T15:00:22.220Z'
         }
+    ],
+    notifications: [
+      {
+        recipient: 'user',
+        sender: 'john',
+        read: 'true | false',
+        kusopostId: 'kdjsfgdksuufhgkdsufky',
+        type: 'like | comment',
+        createdAt: '2019-03-15T10:59:52.798Z'
+      }
     ]
 }
 
