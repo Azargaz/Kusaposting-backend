@@ -25,14 +25,14 @@ const {
 	markNotificationsRead
 } = require('./handlers/users');
 
-// Kusoposts routes
-app.get('/kusoposts', getAllPosts);
-app.post('/kusopost', firebaseAuth, postOnePost);
-app.get('/kusopost/:kusopostId', getPost);
-app.delete('/kusopost/:kusopostId', firebaseAuth, deletePost);
-app.get('/kusopost/:kusopostId/like', firebaseAuth, likePost);
-app.get('/kusopost/:kusopostId/unlike', firebaseAuth, unlikePost);
-app.post('/kusopost/:kusopostId/comment', firebaseAuth, commentOnPost);
+// kusaposts routes
+app.get('/kusaposts', getAllPosts);
+app.post('/kusapost', firebaseAuth, postOnePost);
+app.get('/kusapost/:kusapostId', getPost);
+app.delete('/kusapost/:kusapostId', firebaseAuth, deletePost);
+app.get('/kusapost/:kusapostId/like', firebaseAuth, likePost);
+app.get('/kusapost/:kusapostId/unlike', firebaseAuth, unlikePost);
+app.post('/kusapost/:kusapostId/comment', firebaseAuth, commentOnPost);
 
 // Users routes
 app.post('/signup', signup);
@@ -49,7 +49,7 @@ exports.createNotificationOnLike = functions
 	.region('europe-west1')
 	.firestore.document('likes/{id}')
 	.onCreate((snapshot) => {
-		return db.doc(`/kusoposts/${snapshot.data().kusopostId}`)
+		return db.doc(`/kusaposts/${snapshot.data().kusapostId}`)
 			.get()
 			.then(doc => {
 				if(doc.exists && doc.data().userHandle !== snapshot.data().userHandle) {
@@ -59,7 +59,7 @@ exports.createNotificationOnLike = functions
 						sender: snapshot.data().userHandle,
 						type: 'like',
 						read: false,
-						kusopostId: doc.id
+						kusapostId: doc.id
 					})
 				}
 			})	
@@ -84,7 +84,7 @@ exports.createNotificationOnComment = functions
 	.region('europe-west1')
 	.firestore.document('comments/{id}')
 	.onCreate((snapshot) => {
-		return db.doc(`/kusoposts/${snapshot.data().kusopostId}`)
+		return db.doc(`/kusaposts/${snapshot.data().kusapostId}`)
 			.get()
 			.then(doc => {
 				if(doc.exists && doc.data().userHandle !== snapshot.data().userHandle) {
@@ -94,7 +94,7 @@ exports.createNotificationOnComment = functions
 						sender: snapshot.data().userHandle,
 						type: 'comment',
 						read: false,
-						kusopostId: doc.id
+						kusapostId: doc.id
 					})
 				}
 			})
@@ -113,12 +113,12 @@ exports.onUserImageChange = functions
 		if(change.before.data().imageUrl !== change.after.data().imageUrl) {
 			console.log('image has changed');
 			const batch = db.batch();
-			return db.collection('kusoposts')
+			return db.collection('kusaposts')
 				.where('userHandle', '==', change.before.data().handle)
 				.get()
 				.then((data) => {
 					data.forEach(doc => {
-						const post = db.doc(`/kusoposts/${doc.id}`);
+						const post = db.doc(`/kusaposts/${doc.id}`);
 						batch.update(post, { userImage: change.after.data().imageUrl });
 					});
 					return batch.commit();
@@ -128,19 +128,19 @@ exports.onUserImageChange = functions
 
 exports.onPostDelete = functions
 	.region('europe-west1')
-	.firestore.document('/kusoposts/{kusopostId}')
+	.firestore.document('/kusaposts/{kusapostId}')
 	.onDelete((snapshot, context) => {
-		const kusopostId = context.params.kusopostId;
+		const kusapostId = context.params.kusapostId;
 		const batch = db.batch();
 		return db.collection('comments')
-			.where('kusopostId', '==', kusopostId)
+			.where('kusapostId', '==', kusapostId)
 			.get()
 			.then(data => {
 				data.forEach(doc => {
 					batch.delete(db.doc(`/comments/${doc.id}`));
 				});
 				return db.collection('likes')
-					.where('kusopostId', '==', kusopostId)
+					.where('kusapostId', '==', kusapostId)
 					.get();
 			})
 			.then(data => {
@@ -148,7 +148,7 @@ exports.onPostDelete = functions
 					batch.delete(db.doc(`/likes/${doc.id}`));
 				});
 				return db.collection('notifications')
-					.where('kusopostId', '==', kusopostId)
+					.where('kusapostId', '==', kusapostId)
 					.get();
 			})
 			.then(data => {

@@ -105,7 +105,7 @@ exports.getUserDetails = (req, res) => {
 		.then(doc => {
 			if(doc.exists) {
 				userData.user = doc.data();
-				return db.collection('kusoposts')
+				return db.collection('kusaposts')
 					.where('userHandle', '==', req.params.handle)
 					.orderBy('createdAt', 'desc')
 					.get();
@@ -114,16 +114,16 @@ exports.getUserDetails = (req, res) => {
 			}
 		})
 		.then(data => {
-			userData.kusoposts = [];
+			userData.kusaposts = [];
 			data.forEach(doc => {
-				userData.kusoposts.push({
+				userData.kusaposts.push({
 					body: doc.data().body,
 					createdAt: doc.data().createdAt,
 					userHandle: doc.data().userHandle,
 					userImage: doc.data().userImage,
 					likeCount: doc.data().likeCount,
 					commentCount: doc.data().commentCount,
-					kusopostId: doc.id
+					kusapostId: doc.id
 				});
 			});
 			return res.json(userData);
@@ -162,7 +162,7 @@ exports.getAuthenticatedUser = (req, res) => {
 					recipient: doc.data().recipient,
 					sender: doc.data().sender,
 					createdAt: doc.data().createdAt,
-					kusopostId: doc.data().kusopostId,
+					kusapostId: doc.data().kusapostId,
 					type: doc.data().type,
 					read: doc.data().read,
 					notificationId: doc.id

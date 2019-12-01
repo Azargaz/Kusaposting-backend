@@ -2,14 +2,14 @@ const { db } = require('../util/admin');
 
 exports.getAllPosts = (req, res) => {
 	db
-		.collection('kusoposts')
+		.collection('kusaposts')
 		.orderBy('createdAt', 'desc')
 		.get()
 		.then(data => {
-			let kusoposts = [];
+			let kusaposts = [];
 			data.forEach(doc => {
-				kusoposts.push({
-					kusopostId: doc.id,
+				kusaposts.push({
+					kusapostId: doc.id,
 					body: doc.data().body,
 					userHandle: doc.data().userHandle,
 					createdAt: doc.data().createdAt,
@@ -18,7 +18,7 @@ exports.getAllPosts = (req, res) => {
 					userImage: doc.data().userImage
 				});
 			});
-			return res.json(kusoposts);
+			return res.json(kusaposts);
 		})
 		.catch(err => console.error(err));
 };
@@ -34,11 +34,11 @@ exports.postOnePost = (req, res) => {
 	};
 
 	db
-		.collection('kusoposts')
+		.collection('kusaposts')
 		.add(newPost)
 		.then(doc => {
 			const resPost = newPost;
-			resPost.kusopostId = doc.id;
+			resPost.kusapostId = doc.id;
 			res.json(resPost);
 		})
 		.catch(err => {
@@ -50,19 +50,19 @@ exports.postOnePost = (req, res) => {
 exports.getPost = (req, res) => {
 	let postData = {};
 
-	db.doc(`/kusoposts/${req.params.kusopostId}`)
+	db.doc(`/kusaposts/${req.params.kusapostId}`)
 		.get()
 		.then(doc => {
 			if(!doc.exists) {
-				return res.status(404).json({ error: 'kusopost not found' });
+				return res.status(404).json({ error: 'kusapost not found' });
 			}
 
 			postData = doc.data();
-			postData.kusopostId = doc.id;
+			postData.kusapostId = doc.id;
 			return db
 				.collection('comments')
 				.orderBy('createdAt', 'desc')
-				.where('kusopostId', '==', req.params.kusopostId)
+				.where('kusapostId', '==', req.params.kusapostId)
 				.get();
 		})
 		.then(data => {
@@ -85,16 +85,16 @@ exports.commentOnPost = (req, res) => {
 	const newComment = {
 		body: req.body.body,
 		createdAt: new Date().toISOString(),
-		kusopostId: req.params.kusopostId,
+		kusapostId: req.params.kusapostId,
 		userHandle: req.user.handle,
 		userImage: req.user.imageUrl
 	};
 
-	db.doc(`/kusoposts/${req.params.kusopostId}`)
+	db.doc(`/kusaposts/${req.params.kusapostId}`)
 		.get()
 		.then(doc => {
 			if(!doc.exists) {
-				return res.status(404).json({ error: 'Kusopost not found' });
+				return res.status(404).json({ error: 'kusapost not found' });
 			}
 			return doc.ref.update({ commentCount: doc.data().commentCount + 1 });
 		})
@@ -113,10 +113,10 @@ exports.commentOnPost = (req, res) => {
 exports.likePost = (req, res) => {
 	const likeDocument = db.collection('likes')
 		.where('userHandle', '==', req.user.handle)
-		.where('kusopostId', '==', req.params.kusopostId)
+		.where('kusapostId', '==', req.params.kusapostId)
 		.limit(1);
 
-	const postDocument = db.doc(`/kusoposts/${req.params.kusopostId}`);
+	const postDocument = db.doc(`/kusaposts/${req.params.kusapostId}`);
 
 	let postData;
 
@@ -124,17 +124,17 @@ exports.likePost = (req, res) => {
 		.then(doc => {
 			if(doc.exists) {
 				postData = doc.data();
-				postData.kusopostId = doc.id;
+				postData.kusapostId = doc.id;
 				return likeDocument.get();
 			} else {
-				return res.status(404).json({ error: 'kusopost not found' });
+				return res.status(404).json({ error: 'kusapost not found' });
 			}
 		})
 		.then(data => {
 			if(data.empty) {
 				return db.collection('likes')
 					.add({
-						kusopostId: req.params.kusopostId,
+						kusapostId: req.params.kusapostId,
 						userHandle: req.user.handle
 					})
 					.then(() => {
@@ -145,7 +145,7 @@ exports.likePost = (req, res) => {
 						return res.json(postData);
 					})
 			} else {
-				return res.status(400).json({ error: 'kusopost already liked' });
+				return res.status(400).json({ error: 'kusapost already liked' });
 			}
 		})
 		.catch(err => {
@@ -157,10 +157,10 @@ exports.likePost = (req, res) => {
 exports.unlikePost = (req, res) => {
 	const likeDocument = db.collection('likes')
 		.where('userHandle', '==', req.user.handle)
-		.where('kusopostId', '==', req.params.kusopostId)
+		.where('kusapostId', '==', req.params.kusapostId)
 		.limit(1);
 
-	const postDocument = db.doc(`/kusoposts/${req.params.kusopostId}`);
+	const postDocument = db.doc(`/kusaposts/${req.params.kusapostId}`);
 
 	let postData;
 
@@ -168,15 +168,15 @@ exports.unlikePost = (req, res) => {
 		.then(doc => {
 			if(doc.exists) {
 				postData = doc.data();
-				postData.kusopostId = doc.id;
+				postData.kusapostId = doc.id;
 				return likeDocument.get();
 			} else {
-				return res.status(404).json({ error: 'kusopost not found' });
+				return res.status(404).json({ error: 'kusapost not found' });
 			}
 		})
 		.then(data => {
 			if(data.empty) {
-				return res.status(400).json({ error: 'kusopost not liked' });
+				return res.status(400).json({ error: 'kusapost not liked' });
 				
 			} else {
 				return db
@@ -198,11 +198,11 @@ exports.unlikePost = (req, res) => {
 };
 
 exports.deletePost = (req, res) => {
-	const document = db.doc(`/kusoposts/${req.params.kusopostId}`);
+	const document = db.doc(`/kusaposts/${req.params.kusapostId}`);
 	document.get()
 		.then(doc => {
 			if(!doc.exists) {
-				return res.status(404).json({ error: 'kusopost not found' });
+				return res.status(404).json({ error: 'kusapost not found' });
 			}
 			if(doc.data().userHandle !== req.user.handle) {
 				return res.status(403).json({ error: 'unauthorized' });
@@ -211,7 +211,7 @@ exports.deletePost = (req, res) => {
 			}
 		})
 		.then(() => {
-			res.json({ message: 'kusopost deleted successfully' });
+			res.json({ message: 'kusapost deleted successfully' });
 		})
 		.catch(err => {
 			console.error(err);

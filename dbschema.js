@@ -11,10 +11,10 @@ let db = {
             location: 'Kyoto, Japan'
         }
     ],
-    kusoposts: [
+    kusaposts: [
         {
             userHandle: 'user',
-            body: 'this is the kusopost body',
+            body: 'this is the kusapost body',
             createdAt: '2019-11-28T15:00:22.220Z',
             likeCount: 5,
             commentCount: 2
@@ -23,7 +23,7 @@ let db = {
     comments: [
         {
             userHandle: 'user',
-            kusopostId: 'fdkjgaoigherjorwe',
+            kusapostId: 'fdkjgaoigherjorwe',
             body: 'nice',
             createdAt: '2019-11-28T15:00:22.220Z'
         }
@@ -33,7 +33,7 @@ let db = {
         recipient: 'user',
         sender: 'john',
         read: 'true | false',
-        kusopostId: 'kdjsfgdksuufhgkdsufky',
+        kusapostId: 'kdjsfgdksuufhgkdsufky',
         type: 'like | comment',
         createdAt: '2019-03-15T10:59:52.798Z'
       }
