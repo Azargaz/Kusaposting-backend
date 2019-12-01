@@ -35,7 +35,7 @@ app.get('/kusopost/:kusopostId/unlike', firebaseAuth, unlikePost);
 app.post('/kusopost/:kusopostId/comment', firebaseAuth, commentOnPost);
 
 // Users routes
-app.post('/singup', signup);
+app.post('/signup', signup);
 app.post('/login', login);
 app.post('/user/image', firebaseAuth, uploadImage);
 app.post('/user', firebaseAuth, addUserDetails);
