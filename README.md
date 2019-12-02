@@ -13,7 +13,7 @@ API for this project allows for:
 
 ### Technologies
 
-This project was created in order to learn Google's Firebase and how to create serverless webapp using it.
+This project was created in order to learn Google's Firebase and how to create fullstack serverless React app.
 Technologies used:
 - [Google's Firebase](https://firebase.google.com/) including Cloud Functions, Database, Storage and Authentication,
 - [Express js](https://expressjs.com/) for the cloud functions,
