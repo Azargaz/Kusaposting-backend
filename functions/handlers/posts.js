@@ -24,6 +24,10 @@ exports.getAllPosts = (req, res) => {
 };
 
 exports.postOnePost = (req, res) => {
+	if (req.body.body.trim() === '') {
+		return res.status(400).json({ body: 'must not be empty' });
+	}
+
 	const newPost = {
 		body: req.body.body,
 		userHandle: req.user.handle,

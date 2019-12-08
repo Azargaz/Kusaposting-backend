@@ -1,10 +1,7 @@
 const admin = require('firebase-admin');
 
 const config = require('../config');
-admin.initializeApp({
-    credential: admin.credential.cert(config.serviceAccount),
-    databaseURL: config.firebase.databaseURL
-});
+admin.initializeApp();
 
 const db = admin.firestore();
 
