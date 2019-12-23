@@ -1,9 +1,11 @@
 const { admin, db } = require('../util/admin');
 
-const config = require('../config');
-
+// Uncomment this and comment two lines below to serve locally
+// const config = require('../config');
+// const firebase = require('firebase');
+// firebase.initializeApp(config.firebase);
 const firebase = require('firebase');
-firebase.initializeApp(config.firebase);
+firebase.initializeApp();
 
 const { validateSignupData, validateLoginData, reduceUserDetails } = require('../util/validators');
 

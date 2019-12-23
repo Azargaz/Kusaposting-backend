@@ -1,8 +1,9 @@
 const functions = require("firebase-functions");
-
 const app = require('express')();
-
 const firebaseAuth = require('./util/firebaseAuth');
+
+const cors = require('cors');
+app.use(cors());
 
 const { db } = require('./util/admin');
 
