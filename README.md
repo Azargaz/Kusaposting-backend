@@ -24,8 +24,8 @@ Technologies used:
 1. If you want to serve/deploy using your Firebase project you will need to do some setting up.
 First initialize your Firebase project in the directory and install all dependencies with `npm install`.
 
-2. (OPTIONAL) Then if you want to serve locally go to `functions` and go to `util/admin.js` and follow instructions what to uncomment and comment,
-do the same in `handlers/users.js`. Then create `config` directory in which you need to create `index.js` file and
+2. Go to `functions` and if you want to serve locally go to `util/admin.js` and follow instructions what to uncomment and comment.
+Whether you want to serve locally or not, create `config` directory in which you need to create `index.js` file and
 inside put this:
 
 	```
@@ -53,6 +53,7 @@ inside put this:
 		}
 	}
 	```
+	`serviceAccount` part is optional if you don't want to serve locally.
 
 	Replace all strings starting with YOUR with your own config which you can find inside your Firebase Project's console here: 
 	https://console.firebase.google.com/u/0/project/YOUR_PROJECT_ID/overview (replace YOUR_PROJECT_ID with your own). 
